@@ -4,6 +4,7 @@ import { MODULE_NAME, TH_CONFIG } from './settings.js';
 import { registerSettings } from './settings.js';
 import {i18n} from './ui.js';
 import getNewHP from './getNewHP.js';
+import { findEffect } from '/systems/lancer/index3.js';
 
 const DELAY = 400;
 
@@ -70,7 +71,6 @@ class TokenHealthDialog extends Dialog {
   }
   return condStatus;
 }
-
 
 /**
  * Remove a condition (AGE System dependent)
@@ -270,7 +270,10 @@ const applyDamage = async (html, isDamage, isTargeted) => {
     isWounded     = await checkCondition(actor, "wounded");
     isUnconscious = await checkCondition(actor, "unconscious");
     isDying       = await checkCondition(actor, "dying");
-    isShredded    = await checkCondition(actor, "shredded");
+    if (game.system.id === 'lancer') {
+      isShredded    = await findEffect(actor, "shredded");
+    }
+    
 
     // console.log("applyDamage: Initial conditions:");
     // console.log("isDying = ", isDying);
@@ -370,11 +373,6 @@ const applyDamage = async (html, isDamage, isTargeted) => {
       ChatMessage.create({content: anounceGM, speaker: ChatMessage.getSpeaker({actor: actor}),
         whisper: ChatMessage.getWhisperRecipients("GM")});
     }
-
-    // test
-    anounceGM = "isShredded = " + isShredded + ", checkCondition(Shredded) = " + checkCondition(actor, "shredded");
-    ChatMessage.create({content: anounceGM, speaker: ChatMessage.getSpeaker({actor: actor}),
-      whisper: ChatMessage.getWhisperRecipients("GM")});
 
    // variable to allow proper LANCER heat calculation, not great but functional enough
     let neg = TH_CONFIG.ALLOW_NEGATIVE;

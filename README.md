@@ -2,6 +2,8 @@
 
 Apply damage/healing with a few keystrokes to all selected tokens at once. Fork from the original module updated to work with LANCER 1.2.0 on FoundryVTT.
 
+Note: If you're applying heat to something that automatically takes damage instead (i.e. a pilot), you will have to actually enter it as damage rather than heat.
+
 Thanks to [schlosrat](https://github.com/schlosrat) for the base module, a merge of this version with the original may or may not happen once I have talked with them about it.
 
 ⚠️ If your version is 0.1.3, you will have to reinstall the module.
