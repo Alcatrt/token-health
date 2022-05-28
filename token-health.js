@@ -212,8 +212,11 @@ const applyDamage = async (html, isDamage, isTargeted) => {
     : canvas.tokens.controlled;
 
 
-  // Get the control parameter for treating damage as additive (escalating from a base of 0, vs. reducing from the pool of health available)
-  const dAdd = TH_CONFIG.ADDITIVE_DAMAGE;
+  /*
+   * Get the control parameter for treating damage as additive (escalating from a base of 0, vs. reducing from the pool of health available)
+   * Now also checks for secondary damage type if the setting is enabled.
+   */ 
+  const dAdd = (TH_CONFIG.ADDITIVE_DAMAGE|| TH_CONFIG.ADDITIVE_DAMAGE_2&&type2);
   let df = 1;
   if (dAdd) df = -1;
 
@@ -259,18 +262,22 @@ const applyDamage = async (html, isDamage, isTargeted) => {
     let isWounded     = false;
     let isUnconscious = false;
     let isDying       = false;
+    // LANCER condition that makes all damage you take ignore armor and resistance
+    let isShredded   = false;
 
     // Conditions are applied to tokens, not actors
     isInjured     = await checkCondition(actor, "injured");
     isWounded     = await checkCondition(actor, "wounded");
     isUnconscious = await checkCondition(actor, "unconscious");
     isDying       = await checkCondition(actor, "dying");
+    isShredded    = await checkCondition(actor, "shredded");
 
     // console.log("applyDamage: Initial conditions:");
     // console.log("isDying = ", isDying);
     // console.log("isUnconscious = ", isUnconscious);
     // console.log("isWounded = ", isWounded);
     // console.log("isInjured = ", isInjured);
+    // console.log("isShredded = ", isShredded);
 
     // Default to full damage applied
     let dapplied = damage;
@@ -281,23 +288,26 @@ const applyDamage = async (html, isDamage, isTargeted) => {
     let mit3 = 0;
     let mit  = 0;
     if (damageType != "Penetrating") {
-      // Get the mitigation attributed
-      mit1 = getProperty(data, TH_CONFIG.MITIGATION_ATTRIBUTE_1);
-      mit2 = getProperty(data, TH_CONFIG.MITIGATION_ATTRIBUTE_2);
-      mit3 = getProperty(data, TH_CONFIG.MITIGATION_ATTRIBUTE_3);
+      // LANCER-specific check (Heat is unaffected by armor, Shredded targets don't benefit from armor), more of a bandaid then anything
+      if (!(game.system.id === 'lancer' && (type2 || isShredded || damageType === "AP"))){
+        // Get the mitigation attributed
+        mit1 = getProperty(data, TH_CONFIG.MITIGATION_ATTRIBUTE_1);
+        mit2 = getProperty(data, TH_CONFIG.MITIGATION_ATTRIBUTE_2);
+        mit3 = getProperty(data, TH_CONFIG.MITIGATION_ATTRIBUTE_3);
 
-      // Mitigation is only applied to damange, and not healing
-      if (damage > 0) {
-        if (mit1 != undefined) {
-          mit = mit + mit1;
+        // Mitigation is only applied to damange, and not healing
+        if (damage > 0) {
+          if (mit1 != undefined) {
+            mit = mit + mit1;
+          }
+          if ((mit2 != undefined) && (damageType === "Impact")) { // AGE-System specific! Make general?
+            mit = mit + mit2;
+          }
+          if ((mit3 != undefined) && (damageType === "Ballistic")) { // AGE-System specific! Make General?
+            mit = mit + mit3;
+          }
+          dapplied = Math.max(damage - mit, 0);
         }
-        if ((mit2 != undefined) && (damageType === "Impact")) { // AGE-System specific! Make general?
-          mit = mit + mit2;
-        }
-        if ((mit3 != undefined) && (damageType === "Ballistic")) { // AGE-System specific! Make General?
-          mit = mit + mit3;
-        }
-        dapplied = Math.max(damage - mit, 0);
       }
     }
 
@@ -310,6 +320,9 @@ const applyDamage = async (html, isDamage, isTargeted) => {
         damageCapacity = max - hp; // Max damage is the difference between max and hp
       } else {
         damageCapacity = hp;       // Max damage is eual to hp
+      }
+      if (game.system.id === 'lancer') {
+        damageCapacity = 999;     // LANCER system on foundry handles 'overkill' automatically, no need for a damage cap. Once again just a bandaid
       }
       // Compute net effect (healing can't take the token above their max capacity)
       let netEffect = Math.min(dapplied, damageCapacity);
@@ -357,8 +370,20 @@ const applyDamage = async (html, isDamage, isTargeted) => {
       ChatMessage.create({content: anounceGM, speaker: ChatMessage.getSpeaker({actor: actor}),
         whisper: ChatMessage.getWhisperRecipients("GM")});
     }
+
+    // test
+    anounceGM = "isShredded = " + isShredded + ", checkCondition(Shredded) = " + checkCondition(actor, "shredded");
+    ChatMessage.create({content: anounceGM, speaker: ChatMessage.getSpeaker({actor: actor}),
+      whisper: ChatMessage.getWhisperRecipients("GM")});
+
+   // variable to allow proper LANCER heat calculation, not great but functional enough
+    let neg = TH_CONFIG.ALLOW_NEGATIVE;
+    if(game.system.id === 'lancer' && dAdd) {
+      max = 999;
+      neg = false;
+    }
     const [newHP, newTempHP] = getNewHP(hp, max, temp, df*dapplied, {
-      allowNegative: TH_CONFIG.ALLOW_NEGATIVE,
+      allowNegative: neg,
     });
 
     // Deal with all cases that could result in Injured/Wounded/Dying conditions

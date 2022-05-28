@@ -67,6 +67,8 @@
   "TOKEN_HEALTH.enableConditionsHint": "Wenn Sie dies aktivieren, kann Token-Gesundheit Token-Bedingungen basierend auf dem angewendeten Schaden festlegen - AGE Systemspezifisch",
   "TOKEN_HEALTH.damageAdds": "Zusatzschaden",
   "TOKEN_HEALTH.damageAddsHint": "Aktivieren Sie dies für Systeme, bei denen sich Schaden ansammelt, anstatt vom aktuellen Zustand abzuziehen",
+  "TOKEN_HEALTH.damageAdds2": "Zusatzschaden (nur Sekundär)",
+  "TOKEN_HEALTH.damageAdds2Hint": "Aktivieren Sie dies für Systeme, bei denen sich Schaden nur im sekundärem Schadenstypen ansammelt, anstatt vom aktuellen Zustand abzuziehen (z.B. LANCER mit Hitze)",
   "TOKEN_HEALTH.enableTokenChat": "Token-Chat aktivieren",
   "TOKEN_HEALTH.enableTokenChatHint": "Wenn Sie dies aktivieren, werden Chat-Nachrichten von betroffenen Token generiert",
   "TOKEN_HEALTH.tokenChatHint": "Angezeigter Text der Spielfigur ($D = Schaden/Heilung angewendet), $DS = Dchaden Untertyp, und $NE = Nettoeffekt)",

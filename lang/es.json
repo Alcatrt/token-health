@@ -67,6 +67,9 @@
   "TOKEN_HEALTH.enableConditionsHint": "Activando se permitirá que el módulo gestione los estados en base al daño aplicado - Específico para Sistemas AGE",
   "TOKEN_HEALTH.damageAdds": "Daño Creciente",
   "TOKEN_HEALTH.damageAddsHint": "Activar si el daño en el sistema se acumula de manera creciente en vez de restarse de la vida actual",
+  // Missing translation for damageAdds2
+  "TOKEN_HEALTH.damageAdds2": "Additive Damage (secondary only)",
+  "TOKEN_HEALTH.damageAdds2Hint": "Enable this for systems where only certain types of damage are additive (i.e. LANCER with Heat)",
   "TOKEN_HEALTH.enableTokenChat": "Habilitar Token Chat",
   "TOKEN_HEALTH.enableTokenChatHint": "Habilitar esto hará que los tokens afectados generen mensajes de chat.",
   "TOKEN_HEALTH.tokenChatHint": "Texto a mostrar en el chat ($D = daño/curación aplicada), $DS = subtipo de daño, y $NE = efecto neto)",

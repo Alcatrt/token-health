@@ -1,6 +1,8 @@
-# Token Health
+# Token Health - LANCER edition
 
-Apply damage/healing with a few keystrokes to all selected tokens at once.
+Apply damage/healing with a few keystrokes to all selected tokens at once. Fork from the original module updated to work with LANCER 1.2.0 on FoundryVTT.
+
+Thanks to [schlosrat](https://github.com/schlosrat) for the base module, a merge of this version with the original may or may not happen once I have talked with them about it.
 
 ⚠️ If your version is 0.1.3, you will have to reinstall the module.
 
@@ -28,6 +30,7 @@ Before using Token Health it is recommended that you first check and configure t
 - TORG Eternity
 - Star Wars FFG (SFRPG)
 - The Expanse RPG (AGE) *Work In Progress*
+- LANCER
 
 If your preferred game system is not on that list then generic defaults will be used and it's **very likely** you'll need to do at least a minimum amount of configuration to make sure damage and healing are being applied to the correct attribute! If you would like to see your preferred system supported with default settings, or if you find an issue with the default settings applied to one of the systems listed above, please open an GitHub issue for this with specific details about the system you'd like supported and the settings you need.
 

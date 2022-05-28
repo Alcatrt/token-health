@@ -67,6 +67,9 @@
   "TOKEN_HEALTH.enableConditionsHint": "これを有効にすると、トークンヘルスは、適用されたダメージに基づいてトークン条件を設定できます",
   "TOKEN_HEALTH.damageAdds": "追加ダメージ",
   "TOKEN_HEALTH.damageAddsHint": "現在のヘルスから差し引くのではなく、ダメージが累積するシステムでこれを有効にします",
+  // Missing translation for damageAdds2
+  "TOKEN_HEALTH.damageAdds2": "Additive Damage (secondary only)",
+  "TOKEN_HEALTH.damageAdds2Hint": "Enable this for systems where only certain types of damage are additive (i.e. LANCER with Heat)",
   "TOKEN_HEALTH.enableTokenChat": "トークンメッセージの有効化",
   "TOKEN_HEALTH.enableTokenChatHint": "有効にすると、HPが変化したときにチャットメッセージが流れます。",
   "TOKEN_HEALTH.tokenChatHint": "トークンから表示するチャットテキスト（$D = ダメージ/修復が適用されます）、$DS = ダメージサブタイプ、および $NE = 正味の効果）",

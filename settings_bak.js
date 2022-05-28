@@ -54,6 +54,7 @@ const DEFAULT = {
   ENABLE_TOKEN_IMAGES: true,
   ENABLE_CONDITIONS: false,
   ADDITIVE_DAMAGE: false,
+  ADDITIVE_DAMAGE_2: false,
 };
 
 /**
@@ -73,6 +74,7 @@ const setDefaults = () => {
     DEFAULT.HITPOINTS_ATTRIBUTE_2 = 'fatigue.value';
     DEFAULT.MAX_HITPOINTS_ATTRIBUTE_2 = 'fatigue.max';
     DEFAULT.ADDITIVE_DAMAGE = true;
+    DEFAULT.ADDITIVE_DAMAGE_2 = true;
   } else if (game.system.id === 'l5r5e'){
     DEFAULT.DAMAGE_SUBTYPE_1 = 'Strife',
     DEFAULT.HITPOINTS_ATTRIBUTE_1 = 'strife.value';
@@ -81,6 +83,7 @@ const setDefaults = () => {
     DEFAULT.HITPOINTS_ATTRIBUTE_2 = 'fatigue.value';
     DEFAULT.MAX_HITPOINTS_ATTRIBUTE_2 = 'fatigue.max';
     DEFAULT.ADDITIVE_DAMAGE = true;
+    DEFAULT.ADDITIVE_DAMAGE_2 = true;
   } else if (game.system.id === 'torgeternity'){
     DEFAULT.DAMAGE_SUBTYPE_1 = 'Wounds',
     DEFAULT.HITPOINTS_ATTRIBUTE_1 = 'wounds.value';
@@ -89,6 +92,7 @@ const setDefaults = () => {
     DEFAULT.HITPOINTS_ATTRIBUTE_2 = 'shock.value';
     DEFAULT.MAX_HITPOINTS_ATTRIBUTE_2 = 'shock.max';
     DEFAULT.ADDITIVE_DAMAGE = true;
+    DEFAULT.ADDITIVE_DAMAGE_2 = true;
   } else if (game.system.id === 'age-system') {
     DEFAULT.DAMAGE_TYPE_1 = 'Impact',
     DEFAULT.DAMAGE_TYPE_2 = 'Ballistic',
@@ -104,6 +108,19 @@ const setDefaults = () => {
     DEFAULT.MITIGATION_ATTRIBUTE_3 = 'armor.ballistic';
     DEFAULT.ENABLE_CONDITIONS = true;
     DEFAULT.ALLOW_DAMAGE_BUYOFF = false;
+  } else if (game.systen.id === 'lancer') {
+    DEFAULT.DAMAGE_TYPE_1 = 'Normal';
+    DEFAULT.DAMAGE_TYPE_2 = 'AP';
+    DEFAULT.DAMAGE_SUBTYPE_1 = 'HP';
+    DEFAULT.HITPOINTS_ATTRIBUTE_1 = 'hp';
+    DEFAULT.MAX_HITPOINTS_ATTRIBUTE_1 = 'MaxHP';
+    DEFAULT.TEMP_HITPOINTS_ATTRIBUTE_1 = 'overshield';
+    DEFAULT.DAMAGE_SUBTYPE_2 = 'Heat';
+    DEFAULT.HITPOINTS_ATTRIBUTE_2 = 'heat';
+    DEFAULT.MAX_HITPOINTS_ATTRIBUTE_2 = 'HeatCapacity';
+    DEFAULT.MITIGATION_ATTRIBUTE_1 = 'derived.armor';
+    DEFAULT.ALLOW_NEGATIVE = true;
+    DEFAULT.ADDITIVE_DAMAGE_2 = true;
   } else {
     DEFAULT.HITPOINTS_ATTRIBUTE_1 = 'health.value';
     DEFAULT.MAX_HITPOINTS_ATTRIBUTE_1 = 'health.max';
@@ -284,6 +301,18 @@ export default () => {
     TH_CONFIG: true,
     onChange: key => {
       TH_CONFIG.ADDITIVE_DAMAGE = key;
+    },
+  });
+  // Enable/disable Additive Damage for Subtype 2 only(for systems Lancer)
+  TH_CONFIG.ADDITIVE_DAMAGE_2 = initSetting( 'damageAdds2', {
+    name: i18n('TOKEN_HEALTH.damageAdds2'),
+    hint: i18n('TOKEN_HEALTH.damageAdds2Hint'),
+    type: Boolean,
+    default: DEFAULT.ADDITIVE_DAMAGE_2,
+    scope: 'world',
+    TH_CONFIG: true,
+    onChange: key => {
+      CONFIG.TokenHealth.ADDITIVE_DAMAGE_2 = key;
     },
   });
   // Primary damage type (optional)

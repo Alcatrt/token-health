@@ -30,6 +30,7 @@ const DEFAULT = {
   ENABLE_TOKEN_IMAGES: true,
   ENABLE_CONDITIONS: false,
   ADDITIVE_DAMAGE: false,
+  ADDITIVE_DAMAGE_2: false,
   RESTRICT_PLAYER_LAUNCH: true,
 };
 
@@ -51,6 +52,7 @@ const setDefaults = () => {
     DEFAULT.HITPOINTS_ATTRIBUTE_2 = 'fatigue.value';
     DEFAULT.MAX_HITPOINTS_ATTRIBUTE_2 = 'fatigue.max';
     DEFAULT.ADDITIVE_DAMAGE = true;
+    DEFAULT.ADDITIVE_DAMAGE_2 = true;
   } else if (game.system.id === 'l5r5e'){
     DEFAULT.DAMAGE_SUBTYPE_1 = 'Strife',
     DEFAULT.HITPOINTS_ATTRIBUTE_1 = 'strife.value';
@@ -59,6 +61,7 @@ const setDefaults = () => {
     DEFAULT.HITPOINTS_ATTRIBUTE_2 = 'fatigue.value';
     DEFAULT.MAX_HITPOINTS_ATTRIBUTE_2 = 'fatigue.max';
     DEFAULT.ADDITIVE_DAMAGE = true;
+    DEFAULT.ADDITIVE_DAMAGE_2 = true;
   } else if (game.system.id === 'torgeternity'){
     DEFAULT.DAMAGE_SUBTYPE_1 = 'Wounds',
     DEFAULT.HITPOINTS_ATTRIBUTE_1 = 'wounds.value';
@@ -67,6 +70,7 @@ const setDefaults = () => {
     DEFAULT.HITPOINTS_ATTRIBUTE_2 = 'shock.value';
     DEFAULT.MAX_HITPOINTS_ATTRIBUTE_2 = 'shock.max';
     DEFAULT.ADDITIVE_DAMAGE = true;
+    DEFAULT.ADDITIVE_DAMAGE_2 = true;
   } else if (game.system.id === 'age-system') {
     DEFAULT.DAMAGE_TYPE_1 = 'Impact',
     DEFAULT.DAMAGE_TYPE_2 = 'Ballistic',
@@ -102,7 +106,20 @@ const setDefaults = () => {
     DEFAULT.MAX_HITPOINTS_ATTRIBUTE_1 = 'attributes.hp.max';
     DEFAULT.ALT_MAX_HITPOINTS_ATTRIBUTE_1 = 'attributes.sp.max';
     DEFAULT.TEMP_HITPOINTS_ATTRIBUTE_1 = 'attributes.sp.value';
-    } else {
+  } else if (game.system.id === 'lancer') {
+    DEFAULT.DAMAGE_TYPE_1 = 'Normal';
+    DEFAULT.DAMAGE_TYPE_2 = 'AP';
+    DEFAULT.DAMAGE_SUBTYPE_1 = 'HP';
+    DEFAULT.HITPOINTS_ATTRIBUTE_1 = 'hp';
+    DEFAULT.MAX_HITPOINTS_ATTRIBUTE_1 = 'MaxHP';
+    DEFAULT.TEMP_HITPOINTS_ATTRIBUTE_1 = 'overshield';
+    DEFAULT.DAMAGE_SUBTYPE_2 = 'Heat';
+    DEFAULT.HITPOINTS_ATTRIBUTE_2 = 'heat';
+    DEFAULT.MAX_HITPOINTS_ATTRIBUTE_2 = 'HeatCapacity';
+    DEFAULT.MITIGATION_ATTRIBUTE_1 = 'derived.armor';
+    DEFAULT.ALLOW_NEGATIVE = true;
+    DEFAULT.ADDITIVE_DAMAGE_2 = true;
+  } else {
     DEFAULT.HITPOINTS_ATTRIBUTE_1 = 'health.value';
     DEFAULT.MAX_HITPOINTS_ATTRIBUTE_1 = 'health.max';
   }
@@ -238,6 +255,19 @@ export const registerSettings = function () {
     },
   });
   CONFIG.TokenHealth.ADDITIVE_DAMAGE = TH_CONFIG.ADDITIVE_DAMAGE; // = game.settings.get(MODULE_NAME, 'damageAdds');
+  // Enable/disable Additive Damage for Subtype 2 only(for systems Lancer)
+  TH_CONFIG.ADDITIVE_DAMAGE_2 = initSetting( 'damageAdds2', {
+    name: i18n('TOKEN_HEALTH.damageAdds2'),
+    hint: i18n('TOKEN_HEALTH.damageAdds2Hint'),
+    type: Boolean,
+    default: DEFAULT.ADDITIVE_DAMAGE_2,
+    scope: 'world',
+    config: true,
+    onChange: key => {
+      CONFIG.TokenHealth.ADDITIVE_DAMAGE_2 = key;
+    },
+  });
+  CONFIG.TokenHealth.ADDITIVE_DAMAGE_2 = TH_CONFIG.ADDITIVE_DAMAGE_2; // = game.settings.get(MODULE_NAME, 'damageAdds');
   // Primary damage type (optional)
   TH_CONFIG.DAMAGE_TYPE_1 = initSetting( 'damageType1', {
     name: i18n('TOKEN_HEALTH.damageType1'),

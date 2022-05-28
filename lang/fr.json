@@ -67,6 +67,9 @@
   "TOKEN_HEALTH.enableConditionsHint": "L'activation de cela permettra à Token Health de définir des conditions de jeton en fonction des dégâts appliqués",
   "TOKEN_HEALTH.damageAdds": "Dommages additifs",
   "TOKEN_HEALTH.damageAddsHint": "Activez cette option pour les systèmes où les dommages s'accumulent plutôt que de se soustraire de la santé actuelle",
+  // Missing translation for damageAdds2
+  "TOKEN_HEALTH.damageAdds2": "Additive Damage (secondary only)",
+  "TOKEN_HEALTH.damageAdds2Hint": "Enable this for systems where only certain types of damage are additive (i.e. LANCER with Heat)",
   "TOKEN_HEALTH.enableTokenChat": "Activer le Chat par Jeton",
   "TOKEN_HEALTH.enableTokenChatHint": "L'activation de cette option entraînera la génération de messages de discussion par les jetons affectés",
   "TOKEN_HEALTH.tokenChatHint": "Texte du chat à afficher à partir du jeton ($D = dégâts/soins appliqués), $DS = sous-type de dégâts et $NE = effet net)",
