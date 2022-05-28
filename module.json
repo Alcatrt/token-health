@@ -53,6 +53,7 @@
   "dependencies": [],
   "socket": false,
   "manifest": "https://raw.githubusercontent.com/Alcatrt/token-health/master/module.json",
+  "download": "https://github.com/Alcatrt/token-health/archive/refs/tags/0.5.6.zip",
   "protected": false,
   "coreTranslation": false,
   "library": false
