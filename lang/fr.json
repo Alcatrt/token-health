@@ -53,6 +53,9 @@
   "TOKEN_HEALTH.tempHp2": "2e piscine de santé temporaire (facultatif)",
   "TOKEN_HEALTH.allowNegative": "Permettre des points de vie négatifs",
   "TOKEN_HEALTH.allowNegativeHint": "Certains systèmes permettent d'avoir des points de vie négatifs (par exemple PF1)",
+  "TOKEN_HEALTH.allowResist": "Allow Resistance",
+  "TOKEN_HEALTH.allowResistHint": "Adds a small checkbox to make targets take half damage",
+  "TOKEN_HEALTH.allowResistLabel": "Resistance:",
   "TOKEN_HEALTH.koThreshold": "Seuil de points de vie pour l'inconscient",
   "TOKEN_HEALTH.koThresholdHint": "Valeur HP à laquelle le joueur / PNJ est inconscient - laissez vide si non applicable dans votre système, ne peut être négatif que si Autoriser les points de vie négatifs est défini",
   "TOKEN_HEALTH.deathThreshold": "Seuil de points de vie pour mourir",
@@ -67,7 +70,6 @@
   "TOKEN_HEALTH.enableConditionsHint": "L'activation de cela permettra à Token Health de définir des conditions de jeton en fonction des dégâts appliqués",
   "TOKEN_HEALTH.damageAdds": "Dommages additifs",
   "TOKEN_HEALTH.damageAddsHint": "Activez cette option pour les systèmes où les dommages s'accumulent plutôt que de se soustraire de la santé actuelle",
-  // Missing translation for damageAdds2
   "TOKEN_HEALTH.damageAdds2": "Additive Damage (secondary only)",
   "TOKEN_HEALTH.damageAdds2Hint": "Enable this for systems where only certain types of damage are additive (i.e. LANCER with Heat)",
   "TOKEN_HEALTH.enableTokenChat": "Activer le Chat par Jeton",

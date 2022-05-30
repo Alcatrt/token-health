@@ -4,17 +4,20 @@ import { MODULE_NAME, TH_CONFIG } from './settings.js';
 import { registerSettings } from './settings.js';
 import {i18n} from './ui.js';
 import getNewHP from './getNewHP.js';
-import { findEffect } from '/systems/lancer/index3.js';
+
 
 const DELAY = 400;
 
 let tokenHealthDisplayed = false;
+// @ts-ignore
+// @ts-ignore
 let dialog, timer;
 //let KeyBinding;
 
 /**
  * Extend Dialog class to force focus on the input
  */
+// @ts-ignore
 class TokenHealthDialog extends Dialog {
   activateListeners(html) {
     super.activateListeners(html);
@@ -41,6 +44,7 @@ class TokenHealthDialog extends Dialog {
   let condStatus = false;
 
   // Behavior depends on system
+  // @ts-ignore
   if (game.system.id === 'age-system') {
     // Token Health relevant conditions are maintained in age-system as Active Effects
 
@@ -82,6 +86,7 @@ class TokenHealthDialog extends Dialog {
   // Clear a Token Health relevant condition for this actor
 
   // Behavior depends on system
+  // @ts-ignore
   if (game.system.id === 'age-system') {
     // Token Health relevant conditions are maintained in age-system as Active Effects
 
@@ -114,6 +119,7 @@ const applyCondition = async (thisActor, condId) => {
   // Set the Token Health relevant condition for this actor
 
   // Behavior depends on system
+  // @ts-ignore
   if (game.system.id === 'age-system') {
     // For AGE System, Token Health relevant conditions are maintained as Active Effects
 
@@ -125,6 +131,7 @@ const applyCondition = async (thisActor, condId) => {
     const condArr = thisActor.effects.filter(e => (e.data.flags?.["age-system"]?.isCondition) &&
       (e.data.flags?.core?.statusId === condId)); // creates an array with the active effects with the condId
     if (condArr.length < 1) { // if the array is empty, creates a new Active Effect
+      // @ts-ignore
       const newEffect = CONFIG.statusEffects.filter(e => e.id === condId)[0]; // search for condId inside statusEffects array
       newEffect["flags.core.statusId"] = newEffect.id; // this is not really necessary, but I opted to keep like this so all Active Effects generated for conditions (no matter how they are generated) will have the same set of flags
       return thisActor.createEmbeddedDocuments("ActiveEffect", [newEffect]);
@@ -137,6 +144,12 @@ const applyCondition = async (thisActor, condId) => {
   }
 }
 
+
+// For LANCER to check if an actor is suffering from a condition
+const findEffect = async (actor, effect) => {
+  return actor.data.effects.find(eff => eff.data.flags.core?.statusId?.endsWith(effect) ?? false) ?? null;
+}
+
 /**
  * Apply damage, use the Actor5e formula
  *
@@ -146,6 +159,7 @@ const applyCondition = async (thisActor, condId) => {
  * @returns {Promise<Entity|Entity[]>}
  */
 const applyDamage = async (html, isDamage, isTargeted) => {
+  // @ts-ignore
   const value = html.find('input[type=number]').val();
   const damage = isDamage ? Number(value) : Number(value) * -1;
 
@@ -159,14 +173,23 @@ const applyDamage = async (html, isDamage, isTargeted) => {
   //   Wound (may actually kill the character)
   //   Stun (may at most render the character unconscious)
   let damageSubtype = "wound";
+  let resist = false;
 
   if (TH_CONFIG.DAMAGE_TYPE_1) {
+    // @ts-ignore
     damageType = html.find('[name="damageType"]')[0].value;
+  }
+  // Get resistance toggle
+  if (TH_CONFIG.ALLOW_RESIST) {
+    // @ts-ignore
+    resist = html.find('[name="resistance"]')[0].checked;
   }
   let type1;
   let type2;
   if (TH_CONFIG.DAMAGE_SUBTYPE_1) {
+    // @ts-ignore
     type1 = html.find('[name="damageSubtype"]')[0].checked;
+    // @ts-ignore
     type2 = html.find('[name="damageSubtype"]')[1].checked;
     if (type1) {
       damageSubtype = TH_CONFIG.DAMAGE_SUBTYPE_1.toLowerCase();
@@ -180,7 +203,9 @@ const applyDamage = async (html, isDamage, isTargeted) => {
 
   // Get the control parameter for enablibng/disabling the application of actor condtions
   let enableConditions = false;
+  // @ts-ignore
   if (game.system.id === 'age-system') {
+    // @ts-ignore
     if (game.settings.get("age-system", "inUseConditions") === 'expanse') {
       enableConditions = TH_CONFIG.ENABLE_CONDITIONS;
     }
@@ -208,7 +233,9 @@ const applyDamage = async (html, isDamage, isTargeted) => {
   const allowDamageBuyoff = TH_CONFIG.ALLOW_DAMAGE_BUYOFF;
 
   const tokens = isTargeted
+    // @ts-ignore
     ? Array.from(game.user.targets)
+    // @ts-ignore
     : canvas.tokens.controlled;
 
 
@@ -245,12 +272,16 @@ const applyDamage = async (html, isDamage, isTargeted) => {
     }
 
     // Get the health, max-health, and temp-health for this damage subtype
+    // @ts-ignore
     const hp = getProperty(data, hpSource);
+    // @ts-ignore
     let max = getProperty(data, maxSource);
+    // @ts-ignore
     const altMax = getProperty(data, altMaxSource)
     if (altMax != undefined) {
       max += altMax;
     }
+    // @ts-ignore
     const temp = getProperty(data, tempSource);
 
     if (dAdd) {
@@ -258,20 +289,29 @@ const applyDamage = async (html, isDamage, isTargeted) => {
       deathThreshold = max; // In an additive damage system deathThreshold = max health for this damage type
     }
 
+    // @ts-ignore
+    // @ts-ignore
     let isInjured     = false;
+    // @ts-ignore
+    // @ts-ignore
     let isWounded     = false;
     let isUnconscious = false;
     let isDying       = false;
-    // LANCER condition that makes all damage you take ignore armor and resistance
-    let isShredded   = false;
+    // LANCER conditions
+    let isShredded    = false;
+    let isExposed     = false;
 
     // Conditions are applied to tokens, not actors
     isInjured     = await checkCondition(actor, "injured");
     isWounded     = await checkCondition(actor, "wounded");
     isUnconscious = await checkCondition(actor, "unconscious");
     isDying       = await checkCondition(actor, "dying");
+    // @ts-ignore
     if (game.system.id === 'lancer') {
+      // @ts-ignore
       isShredded    = await findEffect(actor, "shredded");
+      // @ts-ignore
+      isExposed     = await findEffect(actor, "exposed");
     }
     
 
@@ -285,6 +325,11 @@ const applyDamage = async (html, isDamage, isTargeted) => {
     // Default to full damage applied
     let dapplied = damage;
 
+    // Exposed in LANCER doubles any damage you take.
+    if (isExposed && damage > 0) {
+      dapplied *= 2;
+    }
+
     // Handle damage mitigation if allowed
     let mit1 = 0;
     let mit2 = 0;
@@ -292,10 +337,14 @@ const applyDamage = async (html, isDamage, isTargeted) => {
     let mit  = 0;
     if (damageType != "Penetrating") {
       // LANCER-specific check (Heat is unaffected by armor, Shredded targets don't benefit from armor), more of a bandaid then anything
+      // @ts-ignore
       if (!(game.system.id === 'lancer' && (type2 || isShredded || damageType === "AP"))){
         // Get the mitigation attributed
+        // @ts-ignore
         mit1 = getProperty(data, TH_CONFIG.MITIGATION_ATTRIBUTE_1);
+        // @ts-ignore
         mit2 = getProperty(data, TH_CONFIG.MITIGATION_ATTRIBUTE_2);
+        // @ts-ignore
         mit3 = getProperty(data, TH_CONFIG.MITIGATION_ATTRIBUTE_3);
 
         // Mitigation is only applied to damange, and not healing
@@ -314,6 +363,11 @@ const applyDamage = async (html, isDamage, isTargeted) => {
       }
     }
 
+    // For now it is assumed resistance rounds down after calculation. Maybe add a setting for it in the future?
+    if(resist && damage > 0) {
+      dapplied = Math.floor(dapplied/2);
+    }
+
     let anounceGM = '';
     let anouncePlayer = '';
     if (dapplied > 0) { // Damage will be done
@@ -324,6 +378,7 @@ const applyDamage = async (html, isDamage, isTargeted) => {
       } else {
         damageCapacity = hp;       // Max damage is eual to hp
       }
+      // @ts-ignore
       if (game.system.id === 'lancer') {
         damageCapacity = 999;     // LANCER system on foundry handles 'overkill' automatically, no need for a damage cap. Once again just a bandaid
       }
@@ -369,13 +424,17 @@ const applyDamage = async (html, isDamage, isTargeted) => {
     }
 
     if (enableChat) {
+      // @ts-ignore
       ChatMessage.create({content: anouncePlayer, speaker: ChatMessage.getSpeaker({actor: actor})});
+      // @ts-ignore
       ChatMessage.create({content: anounceGM, speaker: ChatMessage.getSpeaker({actor: actor}),
+        // @ts-ignore
         whisper: ChatMessage.getWhisperRecipients("GM")});
     }
 
    // variable to allow proper LANCER heat calculation, not great but functional enough
     let neg = TH_CONFIG.ALLOW_NEGATIVE;
+    // @ts-ignore
     if(game.system.id === 'lancer' && dAdd) {
       max = 999;
       neg = false;
@@ -399,6 +458,7 @@ const applyDamage = async (html, isDamage, isTargeted) => {
         // actor.setFlag("world", "unconscious", isUnconscious);
         // Announce KO State
         anouncePlayer = TH_CONFIG.UNCONSCIOUS;
+        // @ts-ignore
         if (enableChat) ChatMessage.create({content: anouncePlayer, speaker: ChatMessage.getSpeaker({actor: actor})});
       }
     } else {
@@ -408,6 +468,7 @@ const applyDamage = async (html, isDamage, isTargeted) => {
           ageDamageBuyoff(actor, dapplied - damageCapacity);
         } else {
           // They're going down!
+          // @ts-ignore
           ageNoDamageBuyoff(actor, dapplied - damageCapacity);
         }
       } else if (dapplied >= damageCapacity) {
@@ -419,6 +480,7 @@ const applyDamage = async (html, isDamage, isTargeted) => {
           // actor.setFlag("world", "unconscious", isUnconscious);
           // Announce KO State
           anouncePlayer = TH_CONFIG.UNCONSCIOUS;
+          // @ts-ignore
           if (enableChat) ChatMessage.create({content: anouncePlayer, speaker: ChatMessage.getSpeaker({actor: actor})});
         }
       }
@@ -495,6 +557,8 @@ const applyDamage = async (html, isDamage, isTargeted) => {
  * @param {number} dRemaining the damage remaing to be accounted for
  */
 const ageDamageBuyoff = async(thisActor, dRemaining) => {
+  // @ts-ignore
+  // @ts-ignore
   let conditions;
   let abilities;
   // let speed;
@@ -507,6 +571,8 @@ const ageDamageBuyoff = async(thisActor, dRemaining) => {
   let isFatigued    = false;
   let isInjured     = false;
   let isWounded     = false;
+  // @ts-ignore
+  // @ts-ignore
   let isUnconscious = false;
   let isDying       = false;
   let isProne       = false;
@@ -524,6 +590,7 @@ const ageDamageBuyoff = async(thisActor, dRemaining) => {
   // Temporary setting to prevent issues in 0.8.6
   // enableConditions = false;
 
+  // @ts-ignore
   if (game.system.id === 'age-system') {
     // conditions = thisActor .data.data.conditions;
     abilities = thisActor .data.data.abilities;
@@ -570,11 +637,13 @@ const ageDamageBuyoff = async(thisActor, dRemaining) => {
   }
 
   // Get this speaker
+  // @ts-ignore
   const this_speaker = ChatMessage.getSpeaker({actor: thisActor});
 
   // If the dying condition is currently set
   if (isDying) { // The case in which more damage is pointless
     // More damage to a dead guy is senseless
+    // @ts-ignore
     if (enableChat) ChatMessage.create({speaker: this_speaker, content: flavor4}); // Hey! Don't beat a dead horse!
   } else if (isWounded) { // Damage being applied to a wounded character
     // Set the dying state flag
@@ -597,6 +666,7 @@ const ageDamageBuyoff = async(thisActor, dRemaining) => {
         else await removeCondition(thisActor, "prone");
       }
     // }
+    // @ts-ignore
     if (enableChat) ChatMessage.create({speaker: this_speaker, content: flavor3}); // Good by cruel world!
   } else if (isInjured) { // Damage being applied to a injured character
     // Set the wounded state flag
@@ -604,6 +674,7 @@ const ageDamageBuyoff = async(thisActor, dRemaining) => {
     // thisActor.setFlag("world", "wounded", isWounded);
 
     // Buy off 1d6 damage when taking the wounded condition
+    // @ts-ignore
     let roll1 = await new Roll("1d6").roll({async: true});
     // Roll#evaluate is becoming asynchronous. In the short term you may pass async=true or async=false to
     // evaluation options to nominate your preferred behavior.
@@ -655,6 +726,7 @@ const ageDamageBuyoff = async(thisActor, dRemaining) => {
         if (isProne) await applyCondition(thisActor, "prone");
         // else await removeCondition(thisActor, "prone"); don't remove Prone - they might be that way voluntarily
         }
+      // @ts-ignore
       if (enableChat) ChatMessage.create({speaker: this_speaker, content: flavor3}); // Good by cruel world!
     }
   } else {  // Damage being applied to an uninjured character
@@ -663,6 +735,7 @@ const ageDamageBuyoff = async(thisActor, dRemaining) => {
     // thisActor.setFlag("world", "injured", isInjured);
 
     // Buy off 1d6 damage when taking the injured condition
+    // @ts-ignore
     let roll1 = await new Roll("1d6").roll({async: true});
     // Roll#evaluate is becoming asynchronous. In the short term you may pass async=true or async=false to
     // evaluation options to nominate your preferred behavior.
@@ -701,6 +774,7 @@ const ageDamageBuyoff = async(thisActor, dRemaining) => {
       // thisActor.setFlag("world", "wounded", isWounded);
 
       // Buy off 1d6 damage when taking the wounded condition
+      // @ts-ignore
       let roll2 = await new Roll("1d6").roll({async: true});
       // Roll#evaluate is becoming asynchronous. In the short term you may pass async=true or async=false to
       // evaluation options to nominate your preferred behavior.
@@ -751,6 +825,7 @@ const ageDamageBuyoff = async(thisActor, dRemaining) => {
           if (isProne) await applyCondition(thisActor, "prone");
           else await removeCondition(thisActor, "prone");
         }
+        // @ts-ignore
         if (enableChat) ChatMessage.create({speaker: this_speaker, content: flavor3}); // Good by cruel world!
       }
     }
@@ -776,10 +851,14 @@ const ageNoDamageBuyoff = async(thisActor) => {
   // let isFatigued    = false;
   // let isInjured     = false;
   // let isWounded     = false;
+  // @ts-ignore
+  // @ts-ignore
   let isUnconscious = false;
   let isDying       = false;
   let isProne       = false;
   let isFreefalling = false;
+  // @ts-ignore
+  // @ts-ignore
   let isHelpless    = false;
   // let speedMod      = 0;
   // let speedTotal    = 0;
@@ -822,6 +901,7 @@ const ageNoDamageBuyoff = async(thisActor) => {
   }
   */
 
+  // @ts-ignore
   if (game.system.id === 'age-system') {
     // conditions = thisActor .data.data.conditions;
     abilities = thisActor .data.data.abilities;
@@ -867,11 +947,13 @@ const ageNoDamageBuyoff = async(thisActor) => {
   }
 
   // Get this speaker
+  // @ts-ignore
   const this_speaker = ChatMessage.getSpeaker({actor: thisActor});
 
   // If the dying condition is currently set
   if (isDying) {
     // More damage to a dead guy is senseless
+    // @ts-ignore
     if (enableChat) ChatMessage.create({speaker: this_speaker, content: flavor4}); // Hey! Don't beat a dead horse!
   } else {
     // If not freefalling, then character will also be prone
@@ -892,6 +974,7 @@ const ageNoDamageBuyoff = async(thisActor) => {
       if (isProne) await applyCondition(thisActor, "prone");
       // else await removeCondition(thisActor, "prone");
     }
+    // @ts-ignore
     if (enableChat) ChatMessage.create({speaker: this_speaker, content: flavor3}); // Good by cruel world!
   }
 }
@@ -960,6 +1043,7 @@ const displayOverlay = async (isDamage, tokens, isTargeted = false) => {
   // console.log(damageSubtype1, damageSubtype2, damageSubtypes)
   // let defaultSubtype = TH_CONFIG.DAMAGE_SUBTYPE_1; // "wound";
   // console.log(defaultSubtype)
+  // @ts-ignore
   if (game.system.id === "age-system") {
     // allowPenetratingDamage = true;
     helpText = [helpText, `${i18n('TOKEN_HEALTH.Dialog_Penetration_Help')}`].join('  ')
@@ -972,13 +1056,17 @@ const displayOverlay = async (isDamage, tokens, isTargeted = false) => {
   if ((mit1 != undefined) || (mit2 != undefined || (mit3 != undefined) {
     allowMittigation = true;
   }*/
+  // Control parameter for resistance
+  let resist = TH_CONFIG.ALLOW_RESIST;
 
   if (TH_CONFIG.ENABLE_TOKEN_IMAGES){
+    // @ts-ignore
     const content = await renderTemplate(
       `modules/token-health/templates/token-health-images.hbs`,
-      {thumbnails, damageTypes, damageSubtypes, helpText},
+      {thumbnails, damageTypes, damageSubtypes, helpText, resist},
     );
     // Render the dialog
+    // @ts-ignore
     dialog = new TokenHealthDialog({
       title: i18n(dialogTitle).replace('$1', nameOfTokens),
       buttons,
@@ -989,13 +1077,16 @@ const displayOverlay = async (isDamage, tokens, isTargeted = false) => {
           tokenHealthDisplayed = false;
         }, DELAY);
       },
+    // @ts-ignore
     }).render(true);
   } else {
+    // @ts-ignore
     const content = await renderTemplate(
       `modules/token-health/templates/token-health.hbs`,
       {damageTypes, damageSubtypes, helpText},
     );
     // Render the dialog
+    // @ts-ignore
     dialog = new TokenHealthDialog({
       title: i18n(dialogTitle).replace('$1', nameOfTokens),
       buttons,
@@ -1006,11 +1097,13 @@ const displayOverlay = async (isDamage, tokens, isTargeted = false) => {
           tokenHealthDisplayed = false;
         }, DELAY);
       },
+    // @ts-ignore
     }).render(true);
   }
 };
 
 
+// @ts-ignore
 Handlebars.registerHelper('isChecked', function(value, test) {
   // console.log(value)
   // console.log(test)
@@ -1021,6 +1114,8 @@ Handlebars.registerHelper('isChecked', function(value, test) {
 /**
  * Force closing dialog on Escape (FVTT denies that if you focus something)
  */
+// @ts-ignore
+// @ts-ignore
 const onEscape = () => {
   if (dialog && tokenHealthDisplayed) {
     dialog.close();
@@ -1037,13 +1132,16 @@ const toggle = (event, isDamage = true, isTarget = false) => {
   // Make sure to call only once.
   // SDR: BROKE BROKE BROKE keyboard._handled.add(key);
 
+  // @ts-ignore
   if (!game.user.isGM && TH_CONFIG.RESTRICT_PLAYER_LAUNCH) {
+    // @ts-ignore
     ui.notifications.info(i18n('TOKEN_HEALTH.worthyMsg'))
     // bail out here
     return;
   }
 
   // Cull the array of targeted/selected tokens to only include those owned by the user
+  // @ts-ignore
   const allTokens = isTarget ? Array.from(game.user.targets) : canvas.tokens.controlled
   var tokens = allTokens.filter((x) => { return x.isOwner === true; });
 
@@ -1052,6 +1150,7 @@ const toggle = (event, isDamage = true, isTarget = false) => {
 
   // If there are no owned tokens then no need to launch the dialog
   if (tokens.length < 1) {
+    // @ts-ignore
     ui.notifications.info(i18n('TOKEN_HEALTH.accessMsg'))
     // bail out here
     return;
@@ -1059,10 +1158,12 @@ const toggle = (event, isDamage = true, isTarget = false) => {
 
   // Don't display if no tokens are controlled. Don't display as well if we were trying
   // to apply damage/healing to targets
+  // @ts-ignore
   if (!tokenHealthDisplayed && canvas.tokens.controlled.length > 0 && !isTarget) {
     displayOverlay(isDamage, tokens).catch(console.error);
   }
   // Don't display if no tokens are targeted and we were trying to affect selected
+  // @ts-ignore
   if (!tokenHealthDisplayed && game.user.targets.size > 0 && isTarget) {
     displayOverlay(isDamage, tokens, isTarget).catch(console.error);
   }
@@ -1071,12 +1172,14 @@ const toggle = (event, isDamage = true, isTarget = false) => {
 /**
  * Initialize our stuff
  */
+// @ts-ignore
 Hooks.once('ready', async () => {
   // Initialize settings
   // settings();
   // Register custom module settings
   registerSettings();
 
+  // @ts-ignore
   CONFIG.TokenHealth = TH_CONFIG;
 
   // console.log("Hooks.once('ready')");
@@ -1086,42 +1189,55 @@ Hooks.once('ready', async () => {
   // Customize keybinding registrations - This needs to execute after registerSettings
   // ******* FIX FOR BUG IN V9 238 where keybinding name and hint localizations may not work *******
   // TOGGLE_KEY_BASE: 'Enter'
+  // @ts-ignore
   let key1 = game.keybindings.actions.get("token-health.damageSelectedTokens");
   // console.log("Was damageSelectedTokens.restricted:", key1.restricted)
   key1.name = i18n('TOKEN_HEALTH.toggleKeyName');
   key1.hint = i18n('TOKEN_HEALTH.toggleKeyHint');
   // key1.restricted = TH_CONFIG.RESTRICT_PLAYER_LAUNCH;
+  // @ts-ignore
+  // @ts-ignore
   let key1new = game.keybindings.actions.get("token-health.damageSelectedTokens");
   // console.log("Updated damageSelectedTokens.restricted:", key1new.restricted)
 
   // TOGGLE_KEY_ALT: 'Shift + Enter'
+  // @ts-ignore
   let key2 = game.keybindings.actions.get("token-health.healSelectedTokens");
   // console.log("Was healSelectedTokens.restricted:", key2.restricted)
   key2.name = i18n('TOKEN_HEALTH.toggleKeyAltName');
   key2.hint = i18n('TOKEN_HEALTH.toggleKeyAltHint');
   // key2.restricted = TH_CONFIG.RESTRICT_PLAYER_LAUNCH;
+  // @ts-ignore
+  // @ts-ignore
   let key2new = game.keybindings.actions.get("token-health.healSelectedTokens");
   // console.log("Updated healSelectedTokens.restricted:", key2new.restricted)
 
   // TOGGLE_KEY_TARGET: 'Alt + Enter'
+  // @ts-ignore
   let key3 = game.keybindings.actions.get("token-health.damageTargetedTokens");
   // console.log("Was damageTargetedTokens.restricted:", key3.restricted)
   key3.name = i18n('TOKEN_HEALTH.toggleKeyTargetName');
   key3.hint = i18n('TOKEN_HEALTH.toggleKeyTargetHint');
   // key3.restricted = TH_CONFIG.RESTRICT_PLAYER_LAUNCH;
+  // @ts-ignore
+  // @ts-ignore
   let key3new = game.keybindings.actions.get("token-health.damageTargetedTokens");
   // console.log("Updated damageTargetedTokens.restricted:", key3new.restricted)
 
   // TOGGLE_KEY_TARGET_ALT: 'Alt + Shift + Enter'
+  // @ts-ignore
   let key4 = game.keybindings.actions.get("token-health.healTargetedTokens");
   // console.log("Was healTargetedTokens.restricted:", key4.restricted)
   key4.name = i18n('TOKEN_HEALTH.toggleKeyTargetAltName');
   key4.hint = i18n('TOKEN_HEALTH.toggleKeyTargetAltHint');
   // key4.restricted = TH_CONFIG.RESTRICT_PLAYER_LAUNCH;
+  // @ts-ignore
+  // @ts-ignore
   let key4new = game.keybindings.actions.get("token-health.healTargetedTokens");
   // console.log("Updated healTargetedTokens.restricted:", key4new.restricted)
 });
 
+// @ts-ignore
 Hooks.once('init', async function() {
   // NEW FVTT V9 keybinding system
 	// game.keybindings.register(MODULE_NAME, "sneakyDoor", {
@@ -1146,6 +1262,7 @@ Hooks.once('init', async function() {
 
   // Initialize Keybindings (this executes before registerSettings, so TOKEN_HEALTH stucture is not available yet)
   // TOGGLE_KEY_BASE: 'Enter'
+  // @ts-ignore
   game.keybindings.register(MODULE_NAME, "damageSelectedTokens", {
     // name: "Damage Selected Tokens", // TOKEN_HEALTH.toggleKeyName
     hint: "Display a dialog to enter damage for selected tokens", // TOKEN_HEALTH.toggleKeyHint
@@ -1163,6 +1280,8 @@ Hooks.once('init', async function() {
       }
     ],
     //onDown: () => { ui.notifications.info("Pressed!") },
+    // @ts-ignore
+    // @ts-ignore
     onDown: self => {
       // Replace this with the code the keybinding should execute when pressed
       // ui.notifications.info(i18n('TOKEN_HEALTH.toggleKeyHint'));
@@ -1172,10 +1291,12 @@ Hooks.once('init', async function() {
     restricted: false,              // Restrict this Keybinding to gamemaster only?
     // restricted: TH_CONFIG.RESTRICT_PLAYER_LAUNCH,
     // reservedModifiers: [ "ALT" ],  // If ALT is pressed, the notification is permanent instead of temporary
+    // @ts-ignore
     precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL
   });
 
   // TOGGLE_KEY_ALT: 'Shift + Enter'
+  // @ts-ignore
   game.keybindings.register(MODULE_NAME, "healSelectedTokens", {
     // name: "Heal Selected Tokens", // TOKEN_HEALTH.toggleKeyAltName
     hint: "Display a dialog to enter healing for selected tokens", // TOKEN_HEALTH.toggleKeyAltHint
@@ -1187,6 +1308,8 @@ Hooks.once('init', async function() {
         modifiers: [ "SHIFT" ]
       }
     ],
+    // @ts-ignore
+    // @ts-ignore
     onDown: self => {
       // Replace this with the code the keybinding should execute when pressed
       // ui.notifications.info(i18n('TOKEN_HEALTH.toggleKeyAltHint'));
@@ -1196,10 +1319,12 @@ Hooks.once('init', async function() {
     restricted: false,              // Restrict this Keybinding to gamemaster only?
     // restricted: TH_CONFIG.RESTRICT_PLAYER_LAUNCH,
     // reservedModifiers: [ "ALT" ],  // If ALT is pressed, the notification is permanent instead of temporary
+    // @ts-ignore
     precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL
   });
 
   // TOGGLE_KEY_TARGET: 'Alt + Enter'
+  // @ts-ignore
   game.keybindings.register(MODULE_NAME, "damageTargetedTokens", {
     // name: "Damage Targeted Tokens", // TOKEN_HEALTH.toggleKeyTargetName
     hint: "Display a dialog to enter damage for targeted tokens", // TOKEN_HEALTH.toggleKeyTargetHint
@@ -1211,6 +1336,8 @@ Hooks.once('init', async function() {
         modifiers: [ "ALT" ]
       }
     ],
+    // @ts-ignore
+    // @ts-ignore
     onDown: self => {
       // Replace this with the code the keybinding should execute when pressed
       // ui.notifications.info(i18n('TOKEN_HEALTH.toggleKeyTargetHint'));
@@ -1220,10 +1347,12 @@ Hooks.once('init', async function() {
     restricted: false,              // Restrict this Keybinding to gamemaster only?
     // restricted: TH_CONFIG.RESTRICT_PLAYER_LAUNCH,
     // reservedModifiers: [ "ALT" ],  // If ALT is pressed, the notification is permanent instead of temporary
+    // @ts-ignore
     precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL
   });
 
   // TOGGLE_KEY_TARGET_ALT: 'Alt + Shift + Enter'
+  // @ts-ignore
   game.keybindings.register(MODULE_NAME, "healTargetedTokens", {
     // name: "Heal Targeted Tokens", // TOKEN_HEALTH.toggleKeyTargetAltName
     hint: "Display a dialog to enter damage for targeted tokens", // TOKEN_HEALTH.toggleKeyTargetAltHint
@@ -1235,6 +1364,8 @@ Hooks.once('init', async function() {
         modifiers: [ "ALT", "SHIFT" ]
       }
     ],
+    // @ts-ignore
+    // @ts-ignore
     onDown: self => {
       // Replace this with the code the keybinding should execute when pressed
       // ui.notifications.info(i18n('TOKEN_HEALTH.toggleKeyTargetAltHint'));
@@ -1244,6 +1375,7 @@ Hooks.once('init', async function() {
     restricted: false,              // Restrict this Keybinding to gamemaster only?
     // restricted: TH_CONFIG.RESTRICT_PLAYER_LAUNCH,
     // reservedModifiers: [ "ALT" ],  // If ALT is pressed, the notification is permanent instead of temporary
+    // @ts-ignore
     precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL
   });
 

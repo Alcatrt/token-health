@@ -53,6 +53,9 @@
   "TOKEN_HEALTH.tempHp2": "一時的HPのソース",
   "TOKEN_HEALTH.allowNegative": "負のHPを許可する",
   "TOKEN_HEALTH.allowNegativeHint": "システムによっては、HPがマイナスの値をとることがあります (例：PF1など)",
+  "TOKEN_HEALTH.allowResist": "Allow Resistance",
+  "TOKEN_HEALTH.allowResistHint": "Adds a small checkbox to make targets take half damage",
+  "TOKEN_HEALTH.allowResistLabel": "Resistance:",
   "TOKEN_HEALTH.koThreshold": "気絶が発生するHPの閾値",
   "TOKEN_HEALTH.koThresholdHint": "プレイヤーおよびNPCが気絶状態に陥るHPの値を指定します。ゲームシステムに存在しない場合は空欄にしてください。",
   "TOKEN_HEALTH.deathThreshold": "死亡が発生するHPの閾値",
@@ -67,7 +70,6 @@
   "TOKEN_HEALTH.enableConditionsHint": "これを有効にすると、トークンヘルスは、適用されたダメージに基づいてトークン条件を設定できます",
   "TOKEN_HEALTH.damageAdds": "追加ダメージ",
   "TOKEN_HEALTH.damageAddsHint": "現在のヘルスから差し引くのではなく、ダメージが累積するシステムでこれを有効にします",
-  // Missing translation for damageAdds2
   "TOKEN_HEALTH.damageAdds2": "Additive Damage (secondary only)",
   "TOKEN_HEALTH.damageAdds2Hint": "Enable this for systems where only certain types of damage are additive (i.e. LANCER with Heat)",
   "TOKEN_HEALTH.enableTokenChat": "トークンメッセージの有効化",

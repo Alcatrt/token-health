@@ -53,6 +53,9 @@
   "TOKEN_HEALTH.tempHp2": "Reserva Temporal de Vida 2 (opcional)",
   "TOKEN_HEALTH.allowNegative": "Permitir Puntos de Golpe Negativos",
   "TOKEN_HEALTH.allowNegativeHint": "Algunos sistemas permiten alcanzar puntos de golpe negativos (ej. PF1)",
+  "TOKEN_HEALTH.allowResist": "Allow Resistance",
+  "TOKEN_HEALTH.allowResistHint": "Adds a small checkbox to make targets take half damage",
+  "TOKEN_HEALTH.allowResistLabel": "Resistance:",
   "TOKEN_HEALTH.koThreshold": "Umbral de puntos de golpe para inconsciente",
   "TOKEN_HEALTH.koThresholdHint": "Valor de PG del Jugador/PNJ para quedar inconsciente -  dejar vacío si no aplica al sistema, solo podrán ser negativos si 'Permitir puntos de golpe negativos' esta activado",
   "TOKEN_HEALTH.deathThreshold": "Umbral Puntos de Golpe ante la muerte",
@@ -67,7 +70,6 @@
   "TOKEN_HEALTH.enableConditionsHint": "Activando se permitirá que el módulo gestione los estados en base al daño aplicado - Específico para Sistemas AGE",
   "TOKEN_HEALTH.damageAdds": "Daño Creciente",
   "TOKEN_HEALTH.damageAddsHint": "Activar si el daño en el sistema se acumula de manera creciente en vez de restarse de la vida actual",
-  // Missing translation for damageAdds2
   "TOKEN_HEALTH.damageAdds2": "Additive Damage (secondary only)",
   "TOKEN_HEALTH.damageAdds2Hint": "Enable this for systems where only certain types of damage are additive (i.e. LANCER with Heat)",
   "TOKEN_HEALTH.enableTokenChat": "Habilitar Token Chat",

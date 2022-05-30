@@ -19,12 +19,17 @@
                 </select>
             {{/if}}
         </div>
-        {{#if damageSubtypes}}
+        {{#if (or damageSubtypes resist)}}
             <div class="row">
-                {{#each damageSubtypes}}
-                    <label style="margin: 15px"><input type="radio" name="damageSubtype" value="{{this}}" {{isChecked @index "0"}}>{{this}}</label>
-                {{/each}}
-            </div>
+                {{#if damageSubtypes}}
+                    {{#each damageSubtypes}}
+                        <label style="margin: 15px"><input type="radio" name="damageSubtype" value="{{this}}" {{isChecked @index "0"}}>{{this}}</label>
+                    {{/each}}
+                {{/if}}
+                {{#if resist}}
+                    <label style="margin: 10px" for="token-health-resist">{{localize "TOKEN_HEALTH.allowResistLabel"}}<input class="mini" type="checkbox" name="resistance" {{checked @index "0"}}></label>
+                {{/if}}
+                </div>
         {{/if}}
         <p><small>{{helpText}}</small></p>
     </div>

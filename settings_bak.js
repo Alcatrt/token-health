@@ -48,6 +48,7 @@ const DEFAULT = {
   KO_THRESHOLD: 0,
   DEATH_THRESHOLD: 0,
   ALLOW_NEGATIVE: false,
+  ALLOW_RESIST: false,
   ALLOW_TEMP: false,
   ALLOW_DAMAGE_BUYOFF: false,
   ENABLE_TOKEN_CHAT: true,
@@ -66,6 +67,7 @@ const setDefaults = () => {
     DEFAULT.HITPOINTS_ATTRIBUTE_1 = 'attributes.hp.value';
     DEFAULT.MAX_HITPOINTS_ATTRIBUTE_1 = 'attributes.hp.max';
     DEFAULT.TEMP_HITPOINTS_ATTRIBUTE_1 = 'attributes.hp.temp';
+    DEFAULT.ALLOW_RESIST = true;
   } else if (game.system.id === 'swade'){
     DEFAULT.DAMAGE_SUBTYPE_1 = 'Wounds',
     DEFAULT.HITPOINTS_ATTRIBUTE_1 = 'wounds.value';
@@ -120,6 +122,7 @@ const setDefaults = () => {
     DEFAULT.MAX_HITPOINTS_ATTRIBUTE_2 = 'derived.heat.max';
     DEFAULT.MITIGATION_ATTRIBUTE_1 = 'derived.armor';
     DEFAULT.ALLOW_NEGATIVE = true;
+    DEFAULT.ALLOW_RESIST = true;
     DEFAULT.ADDITIVE_DAMAGE_2 = true;
   } else {
     DEFAULT.HITPOINTS_ATTRIBUTE_1 = 'health.value';

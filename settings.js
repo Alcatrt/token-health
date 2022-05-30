@@ -24,6 +24,7 @@ const DEFAULT = {
   KO_THRESHOLD: 0,
   DEATH_THRESHOLD: 0,
   ALLOW_NEGATIVE: false,
+  ALLOW_RESIST: false,
   ALLOW_TEMP: false,
   ALLOW_DAMAGE_BUYOFF: false,
   ENABLE_TOKEN_CHAT: true,
@@ -44,6 +45,7 @@ const setDefaults = () => {
     DEFAULT.MAX_HITPOINTS_ATTRIBUTE_1 = 'attributes.hp.max';
     DEFAULT.ALT_MAX_HITPOINTS_ATTRIBUTE_1 = 'attributes.hp.tempmax';
     DEFAULT.TEMP_HITPOINTS_ATTRIBUTE_1 = 'attributes.hp.temp';
+    DEFAULT.ALLOW_RESIST = true;
   } else if (game.system.id === 'swade'){
     DEFAULT.DAMAGE_SUBTYPE_1 = 'Wounds',
     DEFAULT.HITPOINTS_ATTRIBUTE_1 = 'wounds.value';
@@ -118,6 +120,7 @@ const setDefaults = () => {
     DEFAULT.MAX_HITPOINTS_ATTRIBUTE_2 = 'derived.heat.max';
     DEFAULT.MITIGATION_ATTRIBUTE_1 = 'derived.armor';
     DEFAULT.ALLOW_NEGATIVE = true;
+    DEFAULT.ALLOW_RESIST = true;
     DEFAULT.ADDITIVE_DAMAGE_2 = true;
   } else {
     DEFAULT.HITPOINTS_ATTRIBUTE_1 = 'health.value';
@@ -267,7 +270,7 @@ export const registerSettings = function () {
       CONFIG.TokenHealth.ADDITIVE_DAMAGE_2 = key;
     },
   });
-  CONFIG.TokenHealth.ADDITIVE_DAMAGE_2 = TH_CONFIG.ADDITIVE_DAMAGE_2; // = game.settings.get(MODULE_NAME, 'damageAdds');
+  CONFIG.TokenHealth.ADDITIVE_DAMAGE_2 = TH_CONFIG.ADDITIVE_DAMAGE_2; // = game.settings.get(MODULE_NAME, 'damageAdds2');
   // Primary damage type (optional)
   TH_CONFIG.DAMAGE_TYPE_1 = initSetting( 'damageType1', {
     name: i18n('TOKEN_HEALTH.damageType1'),
@@ -487,6 +490,19 @@ export const registerSettings = function () {
     },
   });
   CONFIG.TokenHealth.ALLOW_NEGATIVE = TH_CONFIG.ALLOW_NEGATIVE; // = game.settings.get(MODULE_NAME, 'allowNegative');
+  // Enable/Disable checkbox for damage resistance
+  TH_CONFIG.ALLOW_RESIST = initSetting ('allowResist', {
+    name: i18n('TOKEN_HEALTH.allowResist'),
+    hint: i18n('TOKEN_HEALTH.allowResistHint'),
+    type: Boolean,
+    default: DEFAULT.ALLOW_RESIST,
+    scope: 'world',
+    config: true,
+    onChange: key => {
+      CONFIG.TokenHealth.ALLOW_RESIST = key;
+    },
+  });
+  CONFIG.TokenHealth.ALLOW_RESIST = TH_CONFIG.ALLOW_RESIST; // = game.settings.get(MODULE_NAME, 'allowResist');
   // Health threshold for unconsciousness (not applicable for Additivie Damage systems)
   TH_CONFIG.KO_THRESHOLD = initSetting( 'koThreshold', {
     name: i18n('TOKEN_HEALTH.koThreshold'),

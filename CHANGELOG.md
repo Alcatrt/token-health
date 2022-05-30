@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.7 (2022-05-29)
+- Restored compability with systems besides LANCER
+- Implemented support for EXPOSED condition for LANCER
+- Added checkbox to allow applying Resistance to damage, along with an option to en-/disable it.
+- Known Issue: Missing French, Spanish, and Japanese translations for certain settings.
+
 ## 0.5.6 (2022-05-28)
 - Added support for LANCER system
   - Added an option to change only the secondary damage type to additive
