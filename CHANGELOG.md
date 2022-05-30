@@ -1,7 +1,7 @@
 # Changelog
 
 ## 0.5.7 (2022-05-30)
-- Restored capability with systems besides LANCER - Module should now function as intended for all previous systems again.
+- Restored compatibility with systems besides LANCER - Module should now function as intended for all previous systems again.
 - Implemented support for EXPOSED condition for LANCER
 - Added checkbox to allow applying Resistance to damage, along with an option to en-/disable it.
 - Known Issue: Missing French, Spanish, and Japanese translations for certain settings.
